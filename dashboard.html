@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AURAfit – Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="index.html">AURAfit</a>
+      </div>
+      <ul class="navbar-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="workout.html">Workout</a></li>
+        <li><a href="diet.html">Diet</a></li>
+        <li><a href="progress.html">Progress</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li id="userName"></li>
+        <li><button id="logoutBtn">Logout</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main content -->
+  <div class="dashboard-container">
+    <!-- Stats cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa fa-fire"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="caloriesBurned">0</h3>
+          <p>Calories Burned</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa fa-heartbeat"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="workoutsCompleted">0</h3>
+          <p>Workouts Completed</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa fa-cutlery"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="caloriesIntake">0</h3>
+          <p>Calories Intake</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+      <div class="chart">
+        <canvas id="workoutChart"></canvas>
+      </div>
+      <div class="chart">
+        <canvas id="caloriesChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
+
