@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="aurafit.png" type="image/x-icon" />
+  <title>AURAfit Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script defer type="module" src="dashboard.js"></script>
+  <!-- Firebase Scripts -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script defer type="module" src="firebase-init.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- JS for dashboard -->
+  <script defer type="module" src="dashboard.js"></script>
+</head>
+<body>
+ 
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">AURAfit</div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="workout.html">Workout</a></li>
+      <li><a href="diet.html">Diet</a></li>
+      <li><a href="progress.html">Progress</a></li>
+      <li><a href="profile.html">Profile</a></li>
+      <li><span id="username">Loading...</span></li>
+      <li><button id="logoutBtn">Logout</button></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>Welcome back, <span id="userNameHero">Athlete</span>!</h1>
+      <p>Your personalized fitness journey starts here.</p>
+    </div>
+  </header>
+
+  <!-- Dashboard Cards -->
+  <main class="dashboard-content">
+    <div id="card-workout" class="tile">
+      <h3>Today’s Workout</h3>
+      <p>Loading...</p>
+    </div>
+    <div id="card-diet" class="tile">
+      <h3>Today’s Diet</h3>
+      <p>Loading...</p>
+    </div>
+    <div id="card-progress" class="tile">
+      <h3>Progress</h3>
+      <p>Loading...</p>
+    </div>
+    <div id="card-tip" class="tile">
+      <h3>AI Insight</h3>
+      <p>Loading...</p>
+    </div>
+  </main>
+
+  <!-- Chart Section (for progress tracking) -->
+  <section class="chart-section">
+    <div class="tile">
+      <h3>Progress Tracking</h3>
+      <canvas id="progressChart" width="400" height="200"></canvas>
+    </div>
+	    <div class="tile">
+      <h3>Bodybuilder Motivation</h3>
+      <img src="https://via.placeholder.com/400x300.png?text=Bodybuilder+Image" alt="Bodybuilder" class="bodybuilder-image">
+    </div>
+  </section>
+  
+  <!-- Dummy Chart Data Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    const progressChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Workout Progress',
+          data: [60, 65, 70, 75, 80, 85, 90],
+          fill: false,
+          borderColor: '#ff5722',
+          tension: 0.1
+        }]
+      }
+    });
+  });
+</script>
+
+
+</body>
+</html>
