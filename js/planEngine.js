@@ -1,147 +1,95 @@
-// Plan generation logic based on survey data
-function generatePlan(surveyData) {
-  const { age, height, weight, goal, activity_level, diet_type, food_exclusions, health_issues } = surveyData;
+// /js/planEngine.js
 
-  // Calculate BMI (Body Mass Index)
-  const bmi = calculateBMI(height, weight);
-
-  // Determine caloric needs based on goal and activity level
-  const dailyCalories = calculateDailyCalories(bmi, goal, activity_level);
-
-  // Generate workout plan based on goal and activity level
-  const workoutPlan = generateWorkoutPlan(goal, activity_level);
-
-  // Generate diet plan based on diet type and food exclusions
-  const dietPlan = generateDietPlan(diet_type, food_exclusions);
-
-  // Incorporate health conditions into the plan
-  const healthConsiderations = getHealthConsiderations(health_issues);
-
-  // Final fitness plan object
-  const fitnessPlan = {
-    bmi: bmi,
-    dailyCalories: dailyCalories,
-    workoutPlan: workoutPlan,
-    dietPlan: dietPlan,
-    healthConsiderations: healthConsiderations,
-    motivation: surveyData.motivation // Use the user's motivation for personalized recommendations
-  };
-
-  // Return the generated plan
-  return fitnessPlan;
-}
-
-// BMI Calculation
-function calculateBMI(height, weight) {
-  height = height / 100; // Convert height to meters
-  return (weight / (height * height)).toFixed(1);
-}
-
-// Daily Calorie Needs Calculation based on BMI, goal, and activity level
-function calculateDailyCalories(bmi, goal, activity_level) {
-  let baseCalories = 2000; // Base calories for average individual
-
-  // Adjust calories based on BMI (you can fine-tune these ranges)
-  if (bmi < 18.5) {
-    baseCalories += 500; // Underweight, need more calories
-  } else if (bmi >= 25) {
-    baseCalories -= 500; // Overweight, reduce calories
-  }
-
-  // Adjust calories based on fitness goal
-  if (goal === 'Weight Loss') {
-    baseCalories -= 500; // Reduce for weight loss
-  } else if (goal === 'Muscle Gain') {
-    baseCalories += 500; // Increase for muscle gain
-  }
-
-  // Adjust calories based on activity level
-  if (activity_level === 'Sedentary') {
-    baseCalories -= 200;
-  } else if (activity_level === 'Light') {
-    baseCalories += 200;
-  } else if (activity_level === 'Moderate') {
-    baseCalories += 400;
-  } else if (activity_level === 'Intense') {
-    baseCalories += 600;
-  }
-
-  return baseCalories;
-}
-
-// Workout Plan Generator based on goal and activity level
-function generateWorkoutPlan(goal, activity_level) {
-  let workoutPlan = [];
-
-  if (goal === 'Weight Loss') {
-    workoutPlan.push('Cardio: 30–45 minutes, 4–5 times a week');
-    workoutPlan.push('Strength Training: 3 times a week');
-  } else if (goal === 'Muscle Gain') {
-    workoutPlan.push('Strength Training: 4–5 times a week');
-    workoutPlan.push('Cardio: 15–20 minutes, 2–3 times a week');
-  } else if (goal === 'Endurance') {
-    workoutPlan.push('Cardio: 45–60 minutes, 4–5 times a week');
-  } else if (goal === 'Flexibility') {
-    workoutPlan.push('Yoga/Pilates: 3–4 times a week');
-  }
-
-  if (activity_level === 'Sedentary') {
-    workoutPlan.push('Start with light walking and bodyweight exercises');
-  }
-
-  return workoutPlan;
-}
-
-// Diet Plan Generator based on diet type and food exclusions
-function generateDietPlan(diet_type, food_exclusions) {
-  let dietPlan = [];
-
-  if (diet_type === 'Vegetarian') {
-    dietPlan.push('Focus on plant-based proteins (tofu, beans, lentils)');
-  } else if (diet_type === 'Vegan') {
-    dietPlan.push('Ensure adequate intake of plant-based protein and B12');
-  } else if (diet_type === 'Keto') {
-    dietPlan.push('High fat, moderate protein, very low carbs');
-  } else if (diet_type === 'Balanced') {
-    dietPlan.push('Balanced intake of protein, carbs, and healthy fats');
-  }
-
-  if (food_exclusions) {
-    dietPlan.push(`Avoid the following foods: ${food_exclusions}`);
-  }
-
-  return dietPlan;
-}
-
-// Health Conditions Considerations (optional, e.g., for specific conditions)
-function getHealthConsiderations(health_issues) {
-  let considerations = [];
-
-  if (health_issues.toLowerCase().includes('diabetes')) {
-    considerations.push('Monitor blood sugar levels and reduce simple sugars');
-  }
-  if (health_issues.toLowerCase().includes('hypertension')) {
-    considerations.push('Limit salt intake and focus on heart-healthy foods');
-  }
-  if (health_issues.toLowerCase().includes('asthma')) {
-    considerations.push('Include breathing exercises and avoid triggers');
-  }
-
-  return considerations;
-}
-
-// Example usage
-const surveyData = {
-  age: 25,
-  height: 175,
-  weight: 70,
-  goal: 'Muscle Gain',
-  activity_level: 'Moderate',
-  diet_type: 'Balanced',
-  food_exclusions: 'dairy',
-  health_issues: 'asthma',
-  motivation: 'To gain muscle and improve overall health'
+const MEALS = {
+  breakfast: [
+    { name: 'Oatmeal with Berries', cal: 350, protein: 12, carbs: 50, fat: 8, tags: ['vegetarian', 'balanced'] },
+    { name: 'Egg & Avocado Toast', cal: 400, protein: 18, carbs: 30, fat: 20, tags: ['balanced'] },
+    { name: 'Greek Yogurt Parfait', cal: 300, protein: 20, carbs: 35, fat: 5, tags: ['vegetarian'] },
+    { name: 'Vegan Smoothie Bowl', cal: 380, protein: 10, carbs: 60, fat: 10, tags: ['vegan'] },
+    { name: 'Protein Pancakes', cal: 420, protein: 25, carbs: 45, fat: 10, tags: ['balanced'] },
+    { name: 'Chia Seed Pudding', cal: 330, protein: 8, carbs: 40, fat: 15, tags: ['vegan', 'vegetarian'] },
+    { name: 'Spinach Frittata', cal: 360, protein: 22, carbs: 10, fat: 25, tags: ['balanced'] },
+    { name: 'Tofu Scramble', cal: 340, protein: 18, carbs: 20, fat: 18, tags: ['vegan'] },
+    { name: 'Quinoa Porridge', cal: 370, protein: 12, carbs: 55, fat: 8, tags: ['vegetarian', 'vegan'] },
+    { name: 'Breakfast Burrito', cal: 450, protein: 22, carbs: 50, fat: 18, tags: ['balanced'] }
+  ],
+  lunch: [
+    { name: 'Grilled Chicken Salad', cal: 450, protein: 35, carbs: 25, fat: 20, tags: ['balanced'] },
+    { name: 'Quinoa & Black Bean Bowl', cal: 500, protein: 20, carbs: 60, fat: 15, tags: ['vegan', 'vegetarian'] },
+    { name: 'Salmon & Veggies', cal: 550, protein: 40, carbs: 20, fat: 30, tags: ['balanced'] },
+    { name: 'Tofu Stir‑Fry', cal: 480, protein: 25, carbs: 50, fat: 18, tags: ['vegan'] },
+    { name: 'Turkey Wrap', cal: 430, protein: 30, carbs: 35, fat: 15, tags: ['balanced'] },
+    { name: 'Lentil Soup', cal: 320, protein: 18, carbs: 45, fat: 8, tags: ['vegan', 'vegetarian'] },
+    { name: 'Shrimp Tacos', cal: 500, protein: 30, carbs: 40, fat: 22, tags: ['balanced'] },
+    { name: 'Chicken Quinoa Bowl', cal: 520, protein: 38, carbs: 45, fat: 18, tags: ['balanced'] },
+    { name: 'Veggie Burger', cal: 470, protein: 20, carbs: 50, fat: 20, tags: ['vegan', 'vegetarian'] },
+    { name: 'Poke Bowl', cal: 540, protein: 35, carbs: 60, fat: 20, tags: ['balanced'] }
+  ],
+  dinner: [
+    { name: 'Beef Stir‑Fry', cal: 600, protein: 45, carbs: 40, fat: 25, tags: ['balanced'] },
+    { name: 'Zucchini Noodles & Pesto', cal: 400, protein: 15, carbs: 30, fat: 25, tags: ['vegetarian'] },
+    { name: 'Vegan Lentil Stew', cal: 520, protein: 25, carbs: 55, fat: 15, tags: ['vegan'] },
+    { name: 'Grilled Shrimp & Quinoa', cal: 530, protein: 35, carbs: 45, fat: 18, tags: ['balanced'] },
+    { name: 'Baked Salmon & Asparagus', cal: 580, protein: 40, carbs: 20, fat: 30, tags: ['balanced'] },
+    { name: 'Tofu Curry', cal: 550, protein: 22, carbs: 60, fat: 20, tags: ['vegan'] },
+    { name: 'Chicken Alfredo', cal: 620, protein: 38, carbs: 50, fat: 28, tags: ['balanced'] },
+    { name: 'Stuffed Peppers', cal: 480, protein: 25, carbs: 40, fat: 18, tags: ['vegetarian'] },
+    { name: 'Steak & Veggies', cal: 650, protein: 50, carbs: 30, fat: 35, tags: ['balanced'] },
+    { name: 'Eggplant Parmesan', cal: 500, protein: 20, carbs: 45, fat: 22, tags: ['vegetarian'] }
+  ],
+  snacks: [
+    { name: 'Protein Shake', cal: 200, protein: 25, carbs: 10, fat: 5, tags: ['balanced'] },
+    { name: 'Mixed Nuts', cal: 250, protein: 8, carbs: 10, fat: 20, tags: ['vegan'] },
+    { name: 'Apple & Peanut Butter', cal: 220, protein: 6, carbs: 30, fat: 10, tags: ['vegetarian'] },
+    { name: 'Veggies & Hummus', cal: 180, protein: 6, carbs: 20, fat: 8, tags: ['vegan'] },
+    { name: 'Greek Yogurt', cal: 150, protein: 15, carbs: 12, fat: 4, tags: ['vegetarian'] },
+    { name: 'Protein Bar', cal: 230, protein: 20, carbs: 25, fat: 7, tags: ['balanced'] },
+    { name: 'Cheese & Crackers', cal: 260, protein: 12, carbs: 20, fat: 15, tags: ['vegetarian'] },
+    { name: 'Edamame', cal: 190, protein: 17, carbs: 15, fat: 8, tags: ['vegan'] },
+    { name: 'Rice Cakes & Almond Butter', cal: 210, protein: 6, carbs: 30, fat: 8, tags: ['vegan'] },
+    { name: 'Beef Jerky', cal: 180, protein: 20, carbs: 8, fat: 8, tags: ['balanced'] }
+  ]
 };
 
-const fitnessPlan = generatePlan(surveyData);
-console.log(fitnessPlan);
+const WORKOUT_CYCLE = ['Push Day', 'Pull Day', 'Leg Day', 'Rest Day'];
+const WORKOUT_ROUTINES = {
+  'Push Day': ['Bench Press', 'Overhead Press', 'Tricep Dips', 'Push-ups'],
+  'Pull Day': ['Pull-ups', 'Bent-over Rows', 'Bicep Curls', 'Face Pulls'],
+  'Leg Day': ['Squats', 'Deadlifts', 'Lunges', 'Leg Press'],
+  'Rest Day': ['Rest or Light Stretching']
+};
+
+function filterMeals(meals, dietType, exclusions = []) {
+  return meals.filter(m => {
+    if (dietType === 'Vegan' && !m.tags.includes('vegan')) return false;
+    if (dietType === 'Vegetarian' && !m.tags.includes('vegetarian') && m.tags.includes('keto')) return false;
+    if (dietType === 'Keto' && !m.tags.includes('keto')) return false;
+    for (let ex of exclusions) {
+      if (m.name.toLowerCase().includes(ex.toLowerCase())) return false;
+    }
+    return true;
+  });
+}
+
+function chooseRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function generatePlan(surveyData) {
+  const { height, weight, goal, activity_level, diet_type, food_exclusions = [], health_issues = '' } = surveyData;
+
+  const bmi = +(weight / ((height / 100) ** 2)).toFixed(1);
+
+  let calories = 1600 + bmi * 20;
+  if (goal === 'Muscle Gain') calories *= 1.15;
+  if (goal === 'Weight Loss') calories *= 0.8;
+
+  if (activity_level === 'Light') calories += 200;
+  if (activity_level === 'Moderate') calories += 400;
+  if (activity_level === 'Intense') calories += 600;
+
+  calories = Math.round(calories);
+
+  const proteinG = Math.round(weight * (goal === 'Muscle Gain' ? 1.6 : 1.2));
+  const fatG = Math.round((calories * 0.25) / 9);
+  const carbG = Math.round((calories - (proteinG * 4 + fat
