@@ -1,4 +1,6 @@
-import { db, auth } from './firebase-config.js';
+// js/dashboard.js
+import { auth, db } from './firebase-config.js';
+import { doc, getDoc } from 'firebase/firestore';
 
 const logoutBtn = document.getElementById('logoutBtn');
 const userName = document.getElementById('userName');
@@ -7,23 +9,30 @@ const workoutsCompleted = document.getElementById('workoutsCompleted');
 const caloriesIntake = document.getElementById('caloriesIntake');
 
 // Get current user
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(async user => {
   if (user) {
-    // Get user data from Firestore
-    const userRef = db.collection('users').doc(user.uid);
-    userRef.get().then(doc => {
-      const userData = doc.data();
-      userName.innerHTML = `Hello, ${userData.name}`;
+    try {
+      const userRef = doc(db, 'users', user.uid);  // ✅ Firestore modular method
+      const userSnap = await getDoc(userRef);     // ✅ Firestore modular method
 
-      // Update stats from Firestore data
-      caloriesBurned.innerHTML = userData.caloriesBurned || 0;
-      workoutsCompleted.innerHTML = userData.workoutsCompleted || 0;
-      caloriesIntake.innerHTML = userData.caloriesIntake || 0;
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        userName.innerHTML = `Hello, ${userData.name}`;
 
-      // Generate charts dynamically based on user data
-      generateWorkoutChart(userData.workoutData);
-      generateCaloriesChart(userData.caloriesData);
-    });
+        // Update stats from Firestore data
+        caloriesBurned.innerHTML = userData.caloriesBurned || 0;
+        workoutsCompleted.innerHTML = userData.workoutsCompleted || 0;
+        caloriesIntake.innerHTML = userData.caloriesIntake || 0;
+
+        // Generate charts dynamically based on user data
+        generateWorkoutChart(userData.workoutData);
+        generateCaloriesChart(userData.caloriesData);
+      } else {
+        console.error('No user data found in Firestore.');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   }
 });
 
