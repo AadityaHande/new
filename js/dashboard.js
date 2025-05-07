@@ -12,8 +12,9 @@ const caloriesIntake = document.getElementById('caloriesIntake');
 auth.onAuthStateChanged(async user => {
   if (user) {
     try {
-      const userRef = doc(db, 'users', user.uid);  // ✅ Firestore modular method
-      const userSnap = await getDoc(userRef);     // ✅ Firestore modular method
+      // Reference to the user document using modular SDK
+      const userRef = doc(db, 'users', user.uid);  // ✅ Correct usage of modular SDK
+      const userSnap = await getDoc(userRef);     // ✅ Correct usage of modular SDK
 
       if (userSnap.exists()) {
         const userData = userSnap.data();
@@ -91,3 +92,4 @@ function generateCaloriesChart(data) {
     }
   });
 }
+
